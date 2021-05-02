@@ -1,0 +1,6 @@
+/src/bin
+.vs
+bin
+/src/Assets/data.csv
+/.vs
+/.gitignore

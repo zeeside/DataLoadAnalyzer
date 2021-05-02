@@ -23,18 +23,43 @@ namespace DataLoadAnalyzer.Gateways
 
                 var loader = (CsvClient<CompletedOrderProductDto>)this.DataLoader;
 
-                var publisher = (ElasticSearchClient<CompletedOrderProductDto>)this.DataPublisher;                
+                var publisher = (ElasticSearchClient<CompletedOrderProductDto>)this.DataPublisher;
 
-                var records = await loader.Load(stopToken);
-                
-                Logger.LogInformation($"{records.Count} records loaded from CSV. Begin publish to Elastic Search");
+                var publisherContainsData = await PublisherContainsData();
 
-                await publisher.Publish(records, stopToken);
+                if (!(Settings.SkipMigrationIfDataExists && publisherContainsData) )
+                {
+                    var records = await loader.Load(stopToken);
+
+                    Logger.LogInformation($"{records.Count} records loaded from CSV. Begin publish to Elastic Search");
+
+                    await publisher.Publish(records, stopToken);
+                }
+                else
+                {
+                    Logger.LogInformation("Data already exiists on publisher. Skip migration");
+                }                
             }
             else
             {
                 Logger.LogInformation("Skip migration configured");
             }
-        }    
+        }
+        
+        private async Task<bool> PublisherContainsData()
+        {
+            bool dataExistsOnPublisher = false;
+
+            try
+            {
+                dataExistsOnPublisher = (await ((ElasticSearchClient<CompletedOrderProductDto>)this.DataPublisher).Instance.CountAsync<CompletedOrderProductDto>(s => s.Query(q => q.MatchAll()))).Count > 0;
+            }
+            catch
+            {
+                dataExistsOnPublisher = false;
+            }
+
+            return dataExistsOnPublisher;
+        }
     }
 }
