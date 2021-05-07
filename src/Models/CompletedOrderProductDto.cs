@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataLoadAnalyzer.QueryDefinitions
+namespace DataLoadAnalyzer.Models
 {
     public class CompletedOrderProductDto
     {
@@ -43,7 +43,7 @@ namespace DataLoadAnalyzer.QueryDefinitions
         public int Quantity { get; set; }
 
         [Index(11)]
-        public DateTime CreatedAt { get; set; }
+        public long CreatedAt { get; set; }
 
         [Index(12)]
         public decimal Price { get; set; }

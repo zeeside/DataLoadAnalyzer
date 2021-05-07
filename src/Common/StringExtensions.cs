@@ -16,5 +16,6 @@ namespace DataLoadAnalyzer.Common
             }
             return sb.ToString();
         }
+
     }
 }

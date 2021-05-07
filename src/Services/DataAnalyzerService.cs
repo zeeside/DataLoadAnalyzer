@@ -31,7 +31,8 @@ namespace DataLoadAnalyzer.Services
 
             try
             {
-                var client = new CompletedOrderProductsClient(_logger, _options.Analyzers.First());
+                //var client = new CompletedOrderProductsClient(_logger, _options.Analyzers.First());
+                var client = new ProductSalesHistoryClient(_logger, _options.Analyzers.First(a => a.Name == "ProductSalesHistory"));
 
                 await client.Run(stoppingToken);
             }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,5 +9,7 @@ namespace DataLoadAnalyzer.Data
         Task<List<T>> Load(CancellationToken stopToken);
 
         Task Publish(List<T> data, CancellationToken stopToken);
+
+        Task PublishAs<TOut>(List<TOut> records, CancellationToken stopToken) where TOut : class;
     }
 }

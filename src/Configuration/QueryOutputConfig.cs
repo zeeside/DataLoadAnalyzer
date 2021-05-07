@@ -8,5 +8,6 @@
         public bool Summarize { get; set; }
         public bool OutputToConsole { get; set; }
         public string FilePath { get; set; }
+        public string FilePathType { get; set; }
     }
 }

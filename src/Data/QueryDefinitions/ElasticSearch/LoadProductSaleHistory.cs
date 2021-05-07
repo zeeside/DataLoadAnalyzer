@@ -12,12 +12,12 @@ using System.Threading.Tasks;
 
 namespace DataLoadAnalyzer.Data.QueryDefinitions.ElasticSearch
 {
-    public class LoadCompletedOrderProductsQuery : IQueryDefinition<CompletedOrderProductDto>
+    public class LoadProductSaleHistory : IQueryDefinition<ProductSaleHistoryInput>
     {
         private readonly QueryConfig _config;
         private readonly ILogger _logger;
 
-        public LoadCompletedOrderProductsQuery(QueryConfig config, ILogger logger)
+        public LoadProductSaleHistory(QueryConfig config, ILogger logger)
         {
             Check.IsNotNull<QueryConfig>(config);
             Check.IsNotNull<ILogger>(logger);
@@ -32,9 +32,9 @@ namespace DataLoadAnalyzer.Data.QueryDefinitions.ElasticSearch
         }
 
 
-        public async Task<List<QueryExecutionResult>> Execute(IDataClient<CompletedOrderProductDto> dataClient, CancellationToken stopToken)
+        public async Task<List<QueryExecutionResult>> Execute(IDataClient<ProductSaleHistoryInput> dataClient, CancellationToken stopToken)
         {
-            var clientWrapper  = (ElasticSearchClient<CompletedOrderProductDto>)dataClient;
+            var clientWrapper  = (ElasticSearchClient<ProductSaleHistoryInput>)dataClient;
             var output = new List<QueryExecutionResult>();
 
             output.Add( await ExecuteQuery(nameof(FetchCountForAllProducts), "Fetch count of all records", clientWrapper.Instance, FetchCountForAllProducts));
@@ -75,24 +75,24 @@ namespace DataLoadAnalyzer.Data.QueryDefinitions.ElasticSearch
 
         private async Task<long> FetchCountForAllProducts(ElasticClient client)
         {
-            var response = await client.CountAsync<CompletedOrderProductDto>(s => s.Query(q => q.MatchAll()));
+            var response = await client.CountAsync<ProductSaleHistoryInput>(s => s.Query(q => q.MatchAll()));
 
             return response.Count;
         }
 
         private async Task<long> FetchRecordsForProductId_4693843(ElasticClient client)
         {
-            var response = await client.SearchAsync<CompletedOrderProductDto>(s => s.Query(q => q.Match(m => m.Field("productId").Query("4693843"))));
+            var response = await client.SearchAsync<ProductSaleHistoryInput>(s => s.Query(q => q.Match(m => m.Field("productId").Query("4693843"))));
 
             return response.Total;
         }
 
         private async Task<long> FetchAveragePriceForProductId_4693843(ElasticClient client)
         {
-            var response = await client.SearchAsync<CompletedOrderProductDto>(d => d
+            var response = await client.SearchAsync<ProductSaleHistoryInput>(d => d
                 .Query(q => q.Match(m => m.Field("productId").Query("4693843")))
                 .Aggregations( aggs => aggs
-                .Average("AveragePrice", avg => avg.Field(p => p.Price)))
+                .Average("AveragePrice", avg => avg.Field(p => p.PurchasePrice)))
             );
 
             return response.Total;
@@ -101,9 +101,9 @@ namespace DataLoadAnalyzer.Data.QueryDefinitions.ElasticSearch
         
         private async Task<long> FetchAveragePriceForAllProducts(ElasticClient client)
         {
-            var response = await client.SearchAsync<CompletedOrderProductDto>(d => d
+            var response = await client.SearchAsync<ProductSaleHistoryInput>(d => d
                 .Aggregations( aggs => aggs
-                .Average("AveragePrice", avg => avg.Field(p => p.Price)))
+                .Average("AveragePrice", avg => avg.Field(p => p.PurchasePrice)))
             );
 
             return response.Total;

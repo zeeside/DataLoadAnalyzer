@@ -2,17 +2,16 @@
 using DataLoadAnalyzer.Configuration;
 using DataLoadAnalyzer.Data;
 using DataLoadAnalyzer.Models;
-using DataLoadAnalyzer.QueryDefinitions;
 using Microsoft.Extensions.Logging;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace DataLoadAnalyzer.Gateways
 {
-    public class CompletedOrderProductsClient : AnalyzerClientBase<CompletedOrderProductDto>
+    public class ProductSalesHistoryClient : AnalyzerClientBase<ProductSaleHistoryInput>
     {
         private const int IndexBatchSize = 10000;
-        public CompletedOrderProductsClient(
+        public ProductSalesHistoryClient(
             ILogger logger,
             AnalyzerSettings settings) : base(logger, settings){}               
 
@@ -20,11 +19,11 @@ namespace DataLoadAnalyzer.Gateways
         {
             if (!Settings.SkipMigration)
             {
-                Logger.LogInformation($"Begin migration in {nameof(CompletedOrderProductsClient)}.{nameof(ExecuteMigration)}");
+                Logger.LogInformation($"Begin migration in {nameof(ProductSalesHistoryClient)}.{nameof(ExecuteMigration)}");
 
-                var loader = (CsvClient<CompletedOrderProductDto>)this.DataLoader;
+                var loader = (CsvClient<ProductSaleHistoryInput>)this.DataLoader;
 
-                var publisher = (ElasticSearchClient<CompletedOrderProductDto>)this.DataPublisher;
+                var publisher = (ElasticSearchClient<ProductSaleHistoryInput>)this.DataPublisher;
 
                 var publisherContainsData = await PublisherContainsData();
 
@@ -32,9 +31,9 @@ namespace DataLoadAnalyzer.Gateways
                 {
                     var records = await loader.Load(stopToken);
 
-                    Logger.LogInformation($"{records.Count} records loaded from CSV. Begin publish to Elastic Search");
+                    Logger.LogInformation($"{records.Count} records loaded from CSV. Begin publish to Elastic Search");                    
 
-                    await publisher.Publish(records, stopToken);
+                    await publisher.PublishAs<ProductSaleHistory>(records.ToProductSaleHistory(), stopToken);
                 }
                 else
                 {
@@ -53,7 +52,7 @@ namespace DataLoadAnalyzer.Gateways
 
             try
             {
-                dataExistsOnPublisher = (await ((ElasticSearchClient<CompletedOrderProductDto>)this.DataPublisher).Instance.CountAsync<CompletedOrderProductDto>(s => s.Query(q => q.MatchAll()))).Count > 0;
+                dataExistsOnPublisher = (await ((ElasticSearchClient<ProductSaleHistoryInput>)this.DataPublisher).Instance.CountAsync<ProductSaleHistoryInput>(s => s.Query(q => q.MatchAll()))).Count > 0;
             }
             catch
             {

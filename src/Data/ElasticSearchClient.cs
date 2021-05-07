@@ -58,6 +58,14 @@ namespace DataLoadAnalyzer.Data
             {
                 await Instance.BulkAsync(b => b.IndexMany(batch), stopToken);
             }
-        }        
+        }
+
+        public async Task PublishAs<TOut>(List<TOut> records, CancellationToken stopToken) where TOut : class
+        {
+            foreach (var batch in records.Batch(_publishBatchSize))
+            {
+                await Instance.BulkAsync(b => b.IndexMany(batch), stopToken);
+            }
+        }
     }
 }

@@ -37,5 +37,10 @@ namespace DataLoadAnalyzer.Data
         {
             throw new NotImplementedException();
         }
+
+        public Task PublishAs<TOut>(List<TOut> records, CancellationToken stopToken) where TOut : class
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,6 +1,9 @@
 /src/bin
+/src/obj
 .vs
 bin
 /src/Assets/data.csv
+/src/Assets/Reports/CompletedOrderProducts
+/tests/obj
 /.vs
 /.gitignore

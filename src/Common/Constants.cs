@@ -7,5 +7,8 @@
         public const string ElastiSearchTopic = "index";
         public const string ElastiSearchPublishBatchSize = "PublishBatchSize";
         public const string FilePath = "filepath";
+        public const string FilePathType = "filepathtype";
+        public const string RelativeFilePathType = "relative";
+        public const string AbsoluteFilePathType = "absolute";
     }
 }

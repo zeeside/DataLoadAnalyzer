@@ -1,4 +1,5 @@
 ﻿using DataLoadAnalyzer.Data.QueryDefinitions;
+using DataLoadAnalyzer.Models;
 using DataLoadAnalyzer.QueryDefinitions;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,6 +50,33 @@ namespace DataLoadAnalyzer.Common
             }
 
             return null;
+        }
+
+        public static List<ProductSaleHistory> ToProductSaleHistory(this IEnumerable<ProductSaleHistoryInput> input)
+        {
+            var outputList = new List<ProductSaleHistory>();
+
+            foreach(var p in input)
+            {
+                outputList.Add(
+                    new ProductSaleHistory {
+                        SkuId = p.SkuId,
+                        ProductId = p.ProductId,
+                        ProductName = p.ProductName,
+                        VariantId = p.VariantId,
+                        VariantName = p.VariantName,
+                        ConditionId = p.ConditionId,
+                        ConditionName = p.ConditionName,
+                        LanguageId = p.LanguageId,
+                        LanguageName = p.LanguageName,
+                        QuantitySold = p.QuantitySold,
+                        OrderDate = p.OrderDate.Ticks,
+                        PurchasePrice = p.PurchasePrice,
+                        ShippingPrice = p.ShippingPrice
+                    });
+            }
+
+            return outputList;
         }
     }
 }
